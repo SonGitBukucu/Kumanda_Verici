@@ -10,9 +10,9 @@
 /*
 ####################################
 YAPILACAKLAR/YAPIMI DEVAM EDENLER (önem sırasına göre)
-başlangıçta yapılan gimbal ve switch kontrollerinin yenilendirilmesi        %0
-Servo sinyal karıştırma                                                     %0
-ChaCha20-Poly1305 Şifreleme Koruması                                        %70
+%0          başlangıçta yapılan gimbal ve switch kontrollerinin yapılandırılması
+%0          Servo sinyal karıştırma                                             
+%70         ChaCha20-Poly1305 Şifreleme Koruması                                
 ####################################
 
 #####################################################         KANAL SIRALAMASI         #####################################################
