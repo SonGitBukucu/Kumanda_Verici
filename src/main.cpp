@@ -10,6 +10,7 @@
 /*
 ####################################
 YAPILACAKLAR/YAPIMI DEVAM EDENLER (önem sırasına göre)
+baslamaKontrolu() fonksiyonunun yenilenmesi
 Servo sinyal karıştırma
 ChaCha20-Poly1305 Şifreleme Koruması
 ####################################
