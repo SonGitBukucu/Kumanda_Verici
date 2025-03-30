@@ -10,7 +10,7 @@
 /*
 ####################################
 YAPILACAKLAR/YAPIMI DEVAM EDENLER (önem sırasına göre)
-baslamaKontrolu() fonksiyonunun yenilenmesi
+başlangıçta yapılan gimbal ve switch kontrollerinin yenilendirilmesi
 Servo sinyal karıştırma
 ChaCha20-Poly1305 Şifreleme Koruması
 ####################################
