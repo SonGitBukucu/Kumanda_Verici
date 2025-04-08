@@ -10,7 +10,8 @@
 /*
 ####################################
 YAPILACAKLAR/YAPIMI DEVAM EDENLER (önem sırasına göre)
-%0          başlangıçta yapılan gimbal ve switch kontrollerinin yapılandırılması
+%0          Şu an kullanılan trim fonksiyonun kendi yazacağım hali ile değiştirilmesi
+%0          Başlangıçta yapılan gimbal ve switch kontrollerinin yapılandırılması
 %0          Servo sinyal karıştırma                                             
 %70         ChaCha20-Poly1305 Şifreleme Koruması                                
 ####################################
