@@ -79,7 +79,7 @@ short cokluEEPROMoku(int, int); // EEPROM'dan short veri okuma
 
 void cokluEEPROMyaz(short, int, int); // EEPROM'a short veri yazma
 
-void trimKontrol(short, int, int, short, short);
+void trimAdjustCheck(short, int, int, short, short);
 
 short yonluTrimMap(String, );
 
@@ -126,10 +126,6 @@ void setup() {
   pinMode(pinSWB, INPUT_PULLUP);
   pinMode(pinSWC, INPUT_PULLUP);
   pinMode(pinSWD, INPUT_PULLUP);
-
-  trimAileron = EEPROM.get(ailTrimAdresleri[0], trimAileron); 
-  trimElevator = EEPROM.get(eleTrimAdresleri[0], trimElevator); 
-  trimRudder = EEPROM.get(rudTrimAdresleri[0], trimRudder);
   
   radio.begin();
   radio.openWritingPipe(nrf24kod);
@@ -170,7 +166,39 @@ void cokluEEPROMyaz(short sayi, int highAdres, int lowAdres) {
   EEPROM.update(highAdres, highByte);
   EEPROM.update(lowAdres, lowByte);
 }
-                                                                      
+
+  void trimAdjustCheck(short trimDegeri, int trimDugme1, int trimDugme2, short trimAdres1, short trimAdres2) {
+  unsigned long gecenZaman = millis();
+  static bool buzzerTetik = false;
+ 
+  if (trimDegeri == 500 && !buzzerTetik) {
+    tone(buzzerPin, 900, 500);
+    buzzerTetik = true;
+  }
+  
+  if (trimDegeri != 500) {
+    buzzerTetik = false;
+  }
+  
+  if (gecenZaman - sonBasma >= aralik) {
+
+    if (digitalRead(trimDugme1) == LOW && trimDegeri < 900 ) {
+      trimDegeri += 5;
+      trimDegeri = constrain(trimDegeri, 100, 900);
+      cokluEEPROMyaz(trimDegeri, trimAdres1, trimAdres2);
+      tone(buzzerPin, 1000, 100);
+    }
+
+    if (digitalRead(trimDugme2) == LOW && trimDegeri > 100) {
+      trimDegeri -= 5;
+      trimDegeri = constrain(trimDegeri, 100, 900);
+      cokluEEPROMyaz(trimDegeri, trimAdres1, trimAdres2);
+      tone(buzzerPin, 800, 100);
+    }
+    sonBasma = gecenZaman;
+  } 
+}    
+
 short swcFonksiyon(short switchPin, short pozisyon) {
   if ((pozisyon < 2 || pozisyon > 35) && pozisyon != 3) {
     return 1500;
@@ -194,6 +222,7 @@ short swcFonksiyon(short switchPin, short pozisyon) {
     }
   }
 }
+
 void throttleHold(String durum, short switchPin, int &kanal) {
   if (durum == "açık" && digitalRead(switchPin) == LOW) {
     kanal = 0;
