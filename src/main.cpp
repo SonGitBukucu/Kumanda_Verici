@@ -79,6 +79,10 @@ short cokluEEPROMoku(int, int); // EEPROM'dan short veri okuma
 
 void cokluEEPROMyaz(short, int, int); // EEPROM'a short veri yazma
 
+void trimKontrol(short, int, int, short, short);
+
+short yonluTrimMap(String, );
+
 short swcFonksiyon(short, short); /*
 Fonksiyonun doğru çalışması için sinyal pinlerinin modunu belirlemede "pinMode(pin,INPUT_PULLUP)" kullanılması gerekir.
 Takılan toggle switchlerin kaç pozisyonlu olduğuna göre 0-1023 arasını uygun sayıda bölüme bölüp buna göre switchin kaçıncı pozisyonda olduğunu hesaplayıp uygun değeri yazan fonksiyon.
@@ -153,7 +157,12 @@ void loop() {
 
 // FONKSİYON TANIMLARI
 
-
+short cokluEEPROMoku(int adres1, int adres2) {
+  byte ciktiHigh = EEPROM.read(adres1);
+  byte ciktiLow = EEPROM.read(adres2);
+  short sonuc = (ciktiHigh << 8) + ciktiLow;
+  return sonuc;
+}
 
 void cokluEEPROMyaz(short sayi, int highAdres, int lowAdres) {
   byte lowByte = lowByte(sayi);
@@ -162,13 +171,6 @@ void cokluEEPROMyaz(short sayi, int highAdres, int lowAdres) {
   EEPROM.update(lowAdres, lowByte);
 }
                                                                       
-short cokluEEPROMoku(int adres1, int adres2) {
-  byte ciktiHigh = EEPROM.read(adres1);
-  byte ciktiLow = EEPROM.read(adres2);
-  short sonuc = (ciktiHigh << 8) + ciktiLow;
-  return sonuc;
-}
-
 short swcFonksiyon(short switchPin, short pozisyon) {
   if ((pozisyon < 2 || pozisyon > 35) && pozisyon != 3) {
     return 1500;
