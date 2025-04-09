@@ -91,8 +91,8 @@ Her pozisyonda farklı bir değer okunabilmesi için pozisyon pinlerine Arduino'
 birinci pozisyonda 0, ikinci pozisyonda 1500 ve üçüncü pozisyonda 2000 değerini yazacaktır.
 */
 void throttleHold(String, short, int&); // fonksiyon etkin iken seçilen switchin durumuna göre gazı tümden kapatan fonksiyon.
-short yonluTrimMap(String, short, short); // reverse yapabilmek için ters veya düz seçenekli, hata durumunda 1500 sonucunu veren fonksiyon.
-void trimAdjustCheck(short, short, short, int, int); // "trim değeri elleşilmeli mi?" kontrolü yapan fonksiyon.
+ // reverse yapabilmek için ters veya düz seçenekli, hata durumunda 1500 sonucunu veren fonksiyon.
+ // "trim değeri elleşilmeli mi?" kontrolü yapan fonksiyon.
 void baslamaKontrolu(); /* 
 İnternette satılan kumandalardaki gibi başlangıçta gaz kapalı değilse veya switchlerden en az biri 
 kapalı durumda değilse sesli uyarı verip iletişimi başlatmama güvenlik özelliğini sağlayan fonksiyon. Eğer tetiklenirse bütün kod durduğu için verici tekrardan başlatılmalı.
@@ -139,10 +139,7 @@ void loop() {
   //trimAdjustCheck(trimAileronArti, trimAileronEksi, trimAileron, ailTrimAdresleri[0], ailTrimAdresleri[1]);
   //trimAdjustCheck(trimElevatorArti, trimElevatorEksi, trimElevator,eleTrimAdresleri[0], eleTrimAdresleri[1]);
   //trimAdjustCheck(trimRudderArti, trimRudderEksi, trimRudder, rudTrimAdresleri[0], rudTrimAdresleri[1]);
-  kanal[0] = yonluTrimMap("düz", aileronPinTX, trimAileron); // reverse için "düz"ü "ters" yapın.
-  kanal[1] = yonluTrimMap("düz", elevatorPinTX, trimElevator);
-  kanal[2] = yonluTrimMap("düz", gazPinTX, 512);
-  kanal[3] = yonluTrimMap("düz", rudderPinTX, trimRudder);
+ 
   kanal[4] = swcFonksiyon(pinSWA, 2);
   kanal[5] = swcFonksiyon(pinSWB, 2);
   kanal[6] = swcFonksiyon(pinSWC, 3);
@@ -199,51 +196,6 @@ void throttleHold(String durum, short switchPin, int &kanal) {
   if (durum == "açık" && digitalRead(switchPin) == LOW) {
     kanal = 0;
   }
-}
-
-short yonluTrimMap(String yon, short potPin, short trimDegeri) { // bu fonksiyonda KendinYap kanalının kodundan esinlenildi
-  short deger = constrain(analogRead(potPin), 0, 1023);                      // https://www.rcpano.net/2022/10/30/uzun-mesafe-8-kanalli-ve-dijital-trimli-uzaktan-kumanda-yapimi-diy-rc-bolum-2/
-  if (deger < trimDegeri) {
-    deger = map(deger, 0, trimDegeri, 1000, 1500);
-  }
-  else {
-    deger = map(deger, trimDegeri, 1023, 1500, 2000); 
-  }
-  if (yon == "düz") {
-    return deger;
-  }
-  else if (yon == "ters") {
-    return map(deger, 1000, 2000, 2000, 1000);
-  }
-  return 1500;
-}
-
-void trimAdjustCheck(short trimDugme1, short trimDugme2, short trimDegeri, int trimAdres1, int trimAdres2) {
-  unsigned long gecenZaman = millis();
-  static bool buzzerTetik = false;
-  
-  if (trimDegeri == 512 && !buzzerTetik) {
-    tone(buzzerPin, 900, 500);
-    buzzerTetik = true;
-  }
-  if (trimDegeri != 512) {
-    buzzerTetik = false;
-  }
-  if (gecenZaman - sonBasma >= aralik) {
-    if (digitalRead(trimDugme1) == LOW && trimDegeri < 896 ) {
-      trimDegeri += 6;
-      trimDegeri = constrain(trimDegeri, 128, 896);
-      cokluEEPROMyaz(trimDegeri, trimAdres1, trimAdres2);
-      tone(buzzerPin, 1000, 100);
-    }
-    if (digitalRead(trimDugme2) == LOW && trimDegeri > 128) {
-      trimDegeri -= 6;
-      trimDegeri = constrain(trimDegeri, 128, 896);
-      cokluEEPROMyaz(trimDegeri, trimAdres1, trimAdres2);
-      tone(buzzerPin, 800, 100);
-    }
-    sonBasma = gecenZaman;
-  } 
 }
 
 void baslamaKontrolu() {
