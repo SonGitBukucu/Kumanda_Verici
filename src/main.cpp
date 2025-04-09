@@ -81,7 +81,7 @@ void cokluEEPROMyaz(short, int, int); // EEPROM'a short veri yazma
 
 void trimAdjustCheck(short, int, int, short, short);
 
-short yonluTrimMap(String, );
+short yonluTrimMap(String, short, short);
 
 short swcFonksiyon(short, short); /*
 Fonksiyonun doğru çalışması için sinyal pinlerinin modunu belirlemede "pinMode(pin,INPUT_PULLUP)" kullanılması gerekir.
@@ -167,7 +167,7 @@ void cokluEEPROMyaz(short sayi, int highAdres, int lowAdres) {
   EEPROM.update(lowAdres, lowByte);
 }
 
-  void trimAdjustCheck(short trimDegeri, int trimDugme1, int trimDugme2, short trimAdres1, short trimAdres2) {
+void trimAdjustCheck(short trimDegeri, int trimDugme1, int trimDugme2, short trimAdres1, short trimAdres2) {
   unsigned long gecenZaman = millis();
   static bool buzzerTetik = false;
  
@@ -198,6 +198,18 @@ void cokluEEPROMyaz(short sayi, int highAdres, int lowAdres) {
     sonBasma = gecenZaman;
   } 
 }    
+
+short yonluTrimMap(String yon, short potPin, short trimDegeri); {
+  short deger = map(analogRead(potPin), 0, 1023, 1000, 2000);
+  short servoDeger = constrain((deger + trimDegeri),1000, 2000);
+  if (yon == "düz") {
+    return servoDeger;
+  }
+  else if (yon == "ters") {
+    return map(servoDeger, 1000, 2000, 2000, 1000);
+  }
+  return 1500;
+}
 
 short swcFonksiyon(short switchPin, short pozisyon) {
   if ((pozisyon < 2 || pozisyon > 35) && pozisyon != 3) {
